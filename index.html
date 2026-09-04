@@ -1,0 +1,1817 @@
+<title>منصة منهاج</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --ground: #FAF9F5;
+    --panel: #FFFFFF;
+    --ink: #12211F;
+    --muted: #5C6B68;
+    --faint: #97A19E;
+    --line: #E7E4DB;
+    --rule: #DCD9D0;
+    --p: #0C6152;
+    --p-dark: #0A4C40;
+    --p-soft: #E4EEEA;
+    --p-border: #C4DCD4;
+    --a: #A8762A;
+    --a-soft: #F3E9D6;
+    --a-border: #E3D2AE;
+    --a-dark: #6E4E14;
+    --danger: #9B2C2C;
+    --danger-soft: #FBEAEA;
+    --shadow: 0 1px 2px rgba(18,33,31,.04), 0 8px 24px rgba(18,33,31,.05);
+    --ar: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', system-ui, sans-serif;
+    --en: 'IBM Plex Sans', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; }
+
+  #app {
+    direction: rtl;
+    font-family: var(--ar);
+    background: var(--ground);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .en { font-family: var(--en); direction: ltr; unicode-bidi: isolate; }
+  .wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  a { color: var(--p); }
+  a:hover { color: var(--a); }
+
+  /* ---------- Header ---------- */
+  header.site {
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .head-in { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 11px; background: none; border: 0; padding: 0; cursor: pointer; font-family: var(--ar); }
+  .brand-mark { width: 34px; height: 34px; border-radius: 6px; background: var(--p); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .brand-t { text-align: right; line-height: 1.25; }
+  .brand-ar { font-size: 17px; font-weight: 700; color: var(--ink); }
+  .brand-en { font-size: 11px; letter-spacing: .09em; color: var(--faint); font-family: var(--en); }
+  .head-step { font-size: 13px; color: var(--muted); }
+  .head-step b { color: var(--p); font-weight: 600; }
+
+  /* ---------- Stepper ---------- */
+  .stepper { display: flex; gap: 6px; padding: 14px 0 0; flex-wrap: wrap; }
+  .stepper .st {
+    flex: 1 1 120px; min-width: 0; padding: 9px 12px; border-radius: 4px;
+    background: var(--panel); border: 1px solid var(--line);
+    font-size: 13px; color: var(--faint); display: flex; align-items: center; gap: 8px;
+  }
+  .stepper .st.done { color: var(--p-dark); background: var(--p-soft); border-color: var(--p-border); }
+  .stepper .st.now { color: #fff; background: var(--p); border-color: var(--p); font-weight: 600; }
+  .st-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; opacity: .55; }
+  .stepper .st.now .st-dot, .stepper .st.done .st-dot { opacity: 1; }
+
+  /* ---------- Layout ---------- */
+  main { flex-grow: 1; padding: 28px 0 64px; }
+  .screen { display: none; }
+  .screen.on { display: block; }
+
+  h1.page, h2.page { margin: 0 0 6px; font-size: 30px; font-weight: 700; letter-spacing: -.01em; }
+  p.lead { margin: 0 0 26px; color: var(--muted); font-size: 16px; max-width: 62ch; }
+
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; box-shadow: var(--shadow); }
+  .pad { padding: 26px; }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    font-family: var(--ar); font-size: 16px; font-weight: 600;
+    border-radius: 5px; border: 1px solid transparent; cursor: pointer;
+    padding: 13px 26px; display: inline-flex; align-items: center; gap: 10px;
+    justify-content: center; transition: background .15s, border-color .15s, color .15s;
+    min-height: 48px; text-decoration: none;
+  }
+  .btn:focus-visible { outline: 3px solid var(--a); outline-offset: 2px; }
+  .btn-p { background: var(--p); color: #fff; }
+  .btn-p:hover:not(:disabled) { background: #0A5245; }
+  .btn-a { background: var(--a); color: #fff; }
+  .btn-a:hover:not(:disabled) { background: #916527; }
+  .btn-o { background: var(--panel); color: var(--ink); border-color: var(--rule); }
+  .btn-o:hover:not(:disabled) { border-color: var(--p); color: var(--p); }
+  .btn-q { background: none; color: var(--muted); padding: 10px 14px; min-height: 40px; font-weight: 500; }
+  .btn-q:hover { color: var(--p); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+  /* ---------- Home ---------- */
+  .hero { padding: 54px 0 44px; }
+  .hero .eyebrow { display: inline-flex; align-items: center; gap: 9px; font-size: 13px; color: var(--p); background: var(--p-soft); border: 1px solid var(--p-border); border-radius: 999px; padding: 6px 14px; margin-bottom: 22px; }
+  .hero h1 { margin: 0 0 4px; font-size: 52px; font-weight: 700; line-height: 1.12; letter-spacing: -.02em; }
+  .hero .h-en { font-family: var(--en); direction: ltr; text-align: right; font-size: 18px; letter-spacing: .1em; color: var(--faint); margin-bottom: 22px; }
+  .hero p { font-size: 19px; color: var(--muted); max-width: 60ch; margin: 0 0 30px; line-height: 1.75; }
+  .hero-rule { display: flex; gap: 8px; margin: 0 0 22px; }
+  .hero-rule i { display: block; height: 3px; background: var(--p); width: 72px; }
+  .hero-rule i + i { background: var(--a); width: 24px; }
+
+  .steps4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-top: 54px; }
+  .step4 { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 22px; }
+  .step4 .n { font-family: var(--en); direction: ltr; text-align: right; font-size: 26px; font-weight: 600; color: var(--a-border); line-height: 1; margin-bottom: 14px; }
+  .step4 h3 { margin: 0 0 6px; font-size: 18px; font-weight: 600; }
+  .step4 p { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+  /* ---------- Upload ---------- */
+  .drop {
+    border: 2px dashed var(--rule); border-radius: 8px; background: var(--panel);
+    padding: 56px 28px; text-align: center; cursor: pointer; transition: border-color .15s, background .15s;
+  }
+  .drop:hover, .drop.over { border-color: var(--p); background: var(--p-soft); }
+  .drop:focus-visible { outline: 3px solid var(--a); outline-offset: 3px; }
+  .drop h3 { margin: 16px 0 8px; font-size: 21px; font-weight: 600; }
+  .drop p { margin: 0; color: var(--muted); font-size: 15px; }
+  .formats { margin-top: 18px; font-size: 13px; color: var(--faint); }
+  .formats code { font-family: var(--en); background: var(--ground); border: 1px solid var(--line); border-radius: 3px; padding: 2px 7px; margin: 0 2px; }
+
+  .filecard { display: flex; align-items: center; gap: 16px; padding: 18px 20px; }
+  .filecard .ic { width: 44px; height: 44px; border-radius: 5px; background: var(--p-soft); border: 1px solid var(--p-border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .filecard .meta { flex-grow: 1; min-width: 0; }
+  .filecard .fn { display: block; font-weight: 600; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .filecard .fs { display: block; font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .filecard .acts { display: flex; gap: 6px; flex-shrink: 0; }
+  .pill { font-size: 12px; padding: 3px 10px; border-radius: 999px; font-weight: 600; }
+  .pill-ok { background: var(--p-soft); color: var(--p-dark); }
+  .pill-wait { background: var(--a-soft); color: var(--a-dark); }
+  .pill-err { background: var(--danger-soft); color: var(--danger); }
+
+  /* ---------- Form ---------- */
+  .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .field label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 7px; }
+  .field .hint { font-size: 12.5px; color: var(--faint); font-weight: 400; margin-right: 6px; }
+  .field input, .field select, .field textarea {
+    width: 100%; font-family: var(--ar); font-size: 15px; color: var(--ink);
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 5px;
+    padding: 12px 14px; min-height: 48px;
+  }
+  .field textarea { min-height: 130px; resize: vertical; line-height: 1.7; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--p); box-shadow: 0 0 0 3px var(--p-soft); }
+
+  /* ---------- Progress tracker ---------- */
+  .track { display: flex; flex-direction: column; gap: 12px; }
+  .trow { display: flex; align-items: center; gap: 14px; padding: 15px 18px; border: 1px solid var(--line); border-radius: 5px; background: var(--panel); }
+  .trow .badge { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; border: 1px solid var(--rule); color: var(--faint); }
+  .trow.done .badge { background: var(--p); border-color: var(--p); color: #fff; }
+  .trow.now { border-color: var(--p); background: var(--p-soft); }
+  .trow.now .badge { background: var(--a); border-color: var(--a); color: #fff; }
+  .trow .tt { display: block; font-weight: 600; font-size: 16px; }
+  .trow .ts { display: block; font-size: 13px; color: var(--muted); margin-top: 1px; }
+  .spin { width: 15px; height: 15px; border: 2px solid var(--a-border); border-top-color: var(--a); border-radius: 50%; animation: sp .8s linear infinite; margin-inline-start: auto; flex-shrink: 0; }
+  @keyframes sp { to { transform: rotate(360deg); } }
+
+  /* ---------- Slides ---------- */
+  .prev-grid { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 22px; align-items: start; }
+  .thumbs { display: flex; flex-direction: column; gap: 10px; max-height: 560px; overflow-y: auto; padding-inline-end: 4px; }
+  .thumb { border: 1px solid var(--line); border-radius: 4px; background: var(--panel); padding: 0; cursor: pointer; text-align: right; overflow: hidden; font-family: var(--ar); }
+  .thumb:hover { border-color: var(--p-border); }
+  .thumb[aria-current="true"] { border-color: var(--p); box-shadow: 0 0 0 2px var(--p-soft); }
+  .thumb .tnum { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; border-bottom: 1px solid var(--line); font-size: 11.5px; color: var(--faint); }
+  .thumb .ttl { padding: 9px 10px 11px; font-size: 12.5px; font-weight: 600; line-height: 1.45; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+  .stage { position: relative; width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: #fff; box-shadow: var(--shadow); }
+  .slide { position: absolute; inset: 0; width: 1280px; height: 720px; transform-origin: top right; }
+  .slide-in { width: 1280px; height: 720px; padding: 62px 78px 46px 68px; display: flex; flex-direction: column; position: relative; }
+  .slide-bar { position: absolute; top: 0; right: 0; width: 8px; height: 720px; }
+  .slide h2 { margin: 0; font-size: 46px; font-weight: 700; line-height: 1.25; letter-spacing: -.01em; }
+  .slide .km { margin: 14px 0 0; font-size: 24px; line-height: 1.55; }
+  .slide ul { margin: 30px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 18px; }
+  .slide li { display: flex; gap: 16px; align-items: flex-start; font-size: 26px; line-height: 1.5; font-weight: 500; }
+  .slide li i { width: 11px; height: 11px; margin-top: 14px; flex-shrink: 0; }
+  .slide .srule { display: flex; gap: 9px; margin-top: 20px; }
+  .slide .srule i { display: block; height: 4px; width: 78px; }
+  .slide .sfoot { margin-top: auto; display: flex; justify-content: space-between; align-items: baseline; font-size: 15px; padding-top: 20px; }
+  .slide.cover { justify-content: center; }
+  .slide.cover h2 { font-size: 60px; }
+
+  .slide-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; gap: 12px; }
+  .slide-nav .pos { font-size: 14px; color: var(--muted); }
+  .notes { margin-top: 16px; font-size: 14px; color: var(--muted); line-height: 1.7; background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: 14px 18px; }
+  .notes b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- Info rows ---------- */
+  .facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .fact { background: var(--panel); padding: 16px 18px; }
+  .fact dt { font-size: 12.5px; color: var(--faint); margin-bottom: 5px; }
+  .fact dd { margin: 0; font-size: 16px; font-weight: 600; }
+
+  .swatches { display: flex; gap: 8px; align-items: center; }
+  .sw { width: 22px; height: 22px; border-radius: 4px; border: 1px solid rgba(0,0,0,.1); }
+
+  /* ---------- States ---------- */
+  .state { text-align: center; padding: 54px 26px; }
+  .state h3 { margin: 16px 0 8px; font-size: 20px; font-weight: 600; }
+  .state p { margin: 0 auto 22px; color: var(--muted); max-width: 46ch; }
+  .banner { display: flex; gap: 12px; align-items: flex-start; border-radius: 5px; padding: 15px 18px; font-size: 14.5px; line-height: 1.65; }
+  .banner svg { flex-shrink: 0; margin-top: 2px; }
+  .banner-warn { background: var(--a-soft); border: 1px solid var(--a-border); color: var(--a-dark); }
+  .banner-err { background: var(--danger-soft); border: 1px solid #EDCACA; color: var(--danger); }
+  .banner-info { background: var(--p-soft); border: 1px solid var(--p-border); color: var(--p-dark); }
+
+  .exp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .exp { border: 1px solid var(--line); border-radius: 5px; padding: 20px; background: var(--panel); display: flex; flex-direction: column; gap: 10px; }
+  .exp h4 { margin: 0; font-size: 17px; font-weight: 600; }
+  .exp p { margin: 0; font-size: 13.5px; color: var(--muted); line-height: 1.6; flex-grow: 1; }
+
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .chip { font-size: 13px; background: var(--panel); border: 1px solid var(--rule); border-radius: 999px; padding: 7px 14px; cursor: pointer; font-family: var(--ar); color: var(--muted); }
+  .chip:hover { border-color: var(--p); color: var(--p); }
+
+  footer.site { border-top: 1px solid var(--line); padding: 22px 0; font-size: 13px; color: var(--faint); }
+  .foot-in { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+  .mb0 { margin-bottom: 0; } .mt24 { margin-top: 24px; } .mt18 { margin-top: 18px; } .mt12 { margin-top: 12px; }
+
+  @media (max-width: 900px) {
+    .steps4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .prev-grid { grid-template-columns: minmax(0, 1fr); }
+    .thumbs { flex-direction: row; max-height: none; overflow-x: auto; overflow-y: hidden; padding-bottom: 6px; }
+    .thumb { min-width: 168px; flex-shrink: 0; }
+    .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 620px) {
+    .wrap { padding: 0 16px; }
+    .hero { padding: 34px 0 26px; }
+    .hero h1 { font-size: 36px; }
+    .hero p { font-size: 17px; }
+    h1.page, h2.page { font-size: 24px; }
+    .grid2, .exp-grid, .steps4 { grid-template-columns: minmax(0, 1fr); }
+    .pad { padding: 20px; }
+    .btn { width: 100%; }
+    .btn-q { width: auto; }
+    .btn-row { gap: 10px; }
+    .head-step { display: none; }
+    .stepper .st { flex: 1 1 auto; font-size: 12px; padding: 8px 10px; }
+    .drop { padding: 38px 18px; }
+  }
+</style>
+
+<div id="app">
+
+  <header class="site">
+    <div class="wrap head-in">
+      <button class="brand" id="brandBtn" aria-label="العودة إلى الصفحة الرئيسية">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"></path>
+            <path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"></path>
+          </svg>
+        </span>
+        <span class="brand-t">
+          <span class="brand-ar">منصة منهاج</span><br>
+          <span class="brand-en">MINHAJ PLATFORM</span>
+        </span>
+      </button>
+      <div class="head-step" id="headStep"></div>
+    </div>
+    <div class="wrap" id="stepperWrap" hidden>
+      <div class="stepper" id="stepper" role="list"></div>
+      <div style="height:14px"></div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ============ HOME ============ -->
+    <section class="screen" id="s-home" aria-labelledby="homeH">
+      <div class="wrap hero">
+        <span class="eyebrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"></path><path d="M12 18v3"></path><path d="M5.6 5.6 7.8 7.8"></path><path d="M16.2 16.2l2.2 2.2"></path><path d="M3 12h3"></path><path d="M18 12h3"></path><circle cx="12" cy="12" r="3.4"></circle></svg>
+          مدعومة بالذكاء الاصطناعي
+        </span>
+        <h1 id="homeH">منصة منهاج</h1>
+        <div class="h-en">MINHAJ PLATFORM</div>
+        <div class="hero-rule"><i></i><i></i></div>
+        <p>حوّل مادتك التعليمية إلى عرض تقديمي احترافي منظَّم. ارفع ملفك، وستتولّى المنصة تحليل المحتوى وبناء مخطط العرض وتصميمه، ثم تراجعه وتعتمده وتصدّره — كل ذلك بالعربية.</p>
+        <div class="btn-row">
+          <button class="btn btn-p" data-go="upload">
+            إنشاء عرض تقديمي
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M11.5 5.5 5 12l6.5 6.5"></path></svg>
+          </button>
+          <button class="btn btn-o" id="resumeBtn" hidden>متابعة العرض السابق</button>
+        </div>
+
+        <div class="steps4">
+          <div class="step4"><div class="n">01</div><h3>تحليل المحتوى</h3><p>استخراج المفاهيم والأهداف التعليمية والتسلسل المنطقي من ملفك.</p></div>
+          <div class="step4"><div class="n">02</div><h3>بناء مخطط العرض</h3><p>تحويل المحتوى إلى شرائح، فكرة واحدة لكل شريحة وحد أقصى أربع نقاط.</p></div>
+          <div class="step4"><div class="n">03</div><h3>التصميم</h3><p>نظام بصري أكاديمي متسق يدعم الاتجاه من اليمين إلى اليسار.</p></div>
+          <div class="step4"><div class="n">04</div><h3>المراجعة والتصدير</h3><p>اعتمد العرض أو اطلب تعديلات، ثم صدّره بالصيغة المدعومة.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ UPLOAD ============ -->
+    <section class="screen" id="s-upload" aria-labelledby="upH">
+      <div class="wrap">
+        <h1 class="page" id="upH">ارفع مادتك التعليمية</h1>
+        <p class="lead">اختر ملفًا نصيًا أو ملف PDF يحتوي على نص قابل للاستخراج، أو الصق المحتوى مباشرةً.</p>
+
+        <div id="dropHost">
+          <div class="drop" id="drop" tabindex="0" role="button" aria-label="اسحب الملف هنا أو اضغط لاختيار ملف">
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#0C6152" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"></path><path d="M7.5 8.5 12 4l4.5 4.5"></path><path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"></path></svg>
+            <h3>اسحب الملف وأفلته هنا</h3>
+            <p>أو اضغط لاختيار ملف من جهازك</p>
+            <div class="formats">الصيغ المدعومة فعليًا: <code>.txt</code> <code>.md</code> <code>.pdf</code></div>
+          </div>
+          <input type="file" id="fileInput" accept=".txt,.md,.markdown,.pdf,text/plain,text/markdown,application/pdf" class="sr">
+        </div>
+
+        <div id="fileHost" class="mt18"></div>
+        <div id="uploadErr" class="mt18"></div>
+
+        <div class="card pad mt24">
+          <div class="field">
+            <label for="pasteBox">أو الصق المحتوى نصًا <span class="hint">مفيد إذا تعذّر استخراج نص ملف PDF</span></label>
+            <textarea id="pasteBox" placeholder="الصق هنا نص الدرس أو المحاضرة..."></textarea>
+          </div>
+          <div class="btn-row mt12">
+            <button class="btn btn-o" id="usePaste">استخدام النص الملصق</button>
+          </div>
+        </div>
+
+        <div class="btn-row mt24">
+          <button class="btn btn-p" id="toConfig" disabled>متابعة</button>
+          <button class="btn btn-q" data-go="home">رجوع</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONFIG ============ -->
+    <section class="screen" id="s-config" aria-labelledby="cfgH">
+      <div class="wrap">
+        <h1 class="page" id="cfgH">إعدادات العرض</h1>
+        <p class="lead">كل الحقول اختيارية — القيم الافتراضية كافية. اضغط «إنشاء العرض» مباشرةً إن أردت.</p>
+
+        <div class="card pad">
+          <div class="grid2">
+            <div class="field">
+              <label for="cfgTitle">عنوان العرض <span class="hint">يُستخرج تلقائيًا إن تُرك فارغًا</span></label>
+              <input id="cfgTitle" type="text" placeholder="مثال: مقدمة في أنظمة التشغيل">
+            </div>
+            <div class="field">
+              <label for="cfgAudience">الفئة المستهدفة</label>
+              <input id="cfgAudience" type="text" placeholder="مثال: طلاب البكالوريوس">
+            </div>
+            <div class="field">
+              <label for="cfgLevel">المستوى التعليمي</label>
+              <select id="cfgLevel">
+                <option value="">يُحدَّد تلقائيًا من المحتوى</option>
+                <option>مرحلة ابتدائية</option>
+                <option>مرحلة متوسطة</option>
+                <option>مرحلة ثانوية</option>
+                <option>مرحلة جامعية</option>
+                <option>دورة تدريبية مهنية</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="cfgLang">اللغة</label>
+              <select id="cfgLang">
+                <option value="ar">العربية</option>
+                <option value="ar-en">العربية مع مصطلحات إنجليزية</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="cfgCount">عدد الشرائح التقريبي</label>
+              <select id="cfgCount">
+                <option value="0">يُحدَّد حسب حجم المحتوى</option>
+                <option value="8">8 شرائح</option>
+                <option value="12">12 شريحة</option>
+                <option value="16">16 شريحة</option>
+                <option value="20">20 شريحة</option>
+                <option value="25">25 شريحة</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="cfgStyle">نمط العرض</label>
+              <select id="cfgStyle">
+                <option value="academic">أكاديمي مؤسسي</option>
+                <option value="simple">مبسّط للطلاب</option>
+                <option value="training">تدريبي تفاعلي</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row mt24">
+          <button class="btn btn-p" id="startRun">إنشاء العرض</button>
+          <button class="btn btn-q" data-go="upload">رجوع</button>
+        </div>
+        <div id="cfgErr" class="mt18"></div>
+      </div>
+    </section>
+
+    <!-- ============ PROCESSING ============ -->
+    <section class="screen" id="s-run" aria-labelledby="runH">
+      <div class="wrap">
+        <h1 class="page" id="runH">جاري تجهيز العرض...</h1>
+        <p class="lead" id="runLead">قد تستغرق العملية دقيقة إلى ثلاث دقائق حسب حجم المادة. لا تغلق الصفحة.</p>
+        <div class="track" id="track"></div>
+        <div id="runErr" class="mt24"></div>
+        <div class="btn-row mt24">
+          <button class="btn btn-q" id="cancelRun">إيقاف</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PREVIEW ============ -->
+    <section class="screen" id="s-preview" aria-labelledby="pvH">
+      <div class="wrap">
+        <h1 class="page" id="pvH">معاينة العرض</h1>
+        <p class="lead">تصفّح الشرائح، ثم انتقل إلى المراجعة لاعتماد العرض أو طلب تعديلات.</p>
+        <dl class="facts" id="pvFacts"></dl>
+        <div class="prev-grid mt24">
+          <div class="thumbs" id="thumbs" role="tablist" aria-label="شرائح العرض"></div>
+          <div>
+            <div class="stage" id="stage"></div>
+            <div class="slide-nav">
+              <button class="btn btn-o" id="prevSlide">السابقة</button>
+              <span class="pos" id="slidePos"></span>
+              <button class="btn btn-o" id="nextSlide">التالية</button>
+            </div>
+            <div class="notes" id="slideNotes"></div>
+          </div>
+        </div>
+        <div class="btn-row mt24">
+          <button class="btn btn-p" data-go="review">متابعة إلى المراجعة</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ REVIEW ============ -->
+    <section class="screen" id="s-review" aria-labelledby="rvH">
+      <div class="wrap">
+        <h1 class="page" id="rvH">مراجعة العرض</h1>
+        <p class="lead">اعتمد العرض للانتقال إلى التصدير، أو اطلب تعديلات ليعاد بناء الشرائح المتأثرة فقط.</p>
+        <dl class="facts" id="rvFacts"></dl>
+        <div class="card pad mt24">
+          <div class="btn-row">
+            <button class="btn btn-p" id="approveBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5 9.5 17.5 19.5 7"></path></svg>
+              اعتماد العرض
+            </button>
+            <button class="btn btn-a" data-go="revision">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"></path><path d="M14.5 6.5 17.5 9.5"></path></svg>
+              طلب تعديلات
+            </button>
+            <button class="btn btn-q" data-go="preview">العودة للمعاينة</button>
+          </div>
+        </div>
+        <div id="rvHistory" class="mt24"></div>
+      </div>
+    </section>
+
+    <!-- ============ REVISION ============ -->
+    <section class="screen" id="s-revision" aria-labelledby="rsH">
+      <div class="wrap">
+        <h1 class="page" id="rsH">طلب تعديلات</h1>
+        <p class="lead">اكتب ما تريد تغييره بلغتك الطبيعية. سيُحوَّل طلبك إلى تعليمات تعديل مُهيكلة تُطبَّق على الشرائح المعنية فقط.</p>
+        <div class="card pad">
+          <div class="field">
+            <label for="revBox">اكتب التعديلات التي تريدها...</label>
+            <textarea id="revBox" placeholder="مثال: اختصر النص في الشريحة الثالثة وأضف مثالًا تطبيقيًا."></textarea>
+          </div>
+          <div class="chips" id="revChips"></div>
+        </div>
+        <div class="btn-row mt24">
+          <button class="btn btn-p" id="applyRev">تطبيق التعديلات</button>
+          <button class="btn btn-q" data-go="review">إلغاء</button>
+        </div>
+        <div id="revErr" class="mt18"></div>
+      </div>
+    </section>
+
+    <!-- ============ FINAL / EXPORT ============ -->
+    <section class="screen" id="s-final" aria-labelledby="fnH">
+      <div class="wrap">
+        <h1 class="page" id="fnH">العرض النهائي</h1>
+        <p class="lead" id="fnLead">تم اعتماد العرض. اختر صيغة التصدير المتاحة.</p>
+        <dl class="facts" id="fnFacts"></dl>
+
+        <div class="prev-grid mt24">
+          <div class="thumbs" id="fnThumbs"></div>
+          <div>
+            <div class="stage" id="fnStage"></div>
+            <div class="slide-nav">
+              <button class="btn btn-o" id="fnPrev">السابقة</button>
+              <span class="pos" id="fnPos"></span>
+              <button class="btn btn-o" id="fnNext">التالية</button>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="page mt24" style="font-size:22px">التصدير</h2>
+        <div class="exp-grid" id="exportHost"></div>
+        <div id="exportMsg" class="mt18"></div>
+        <div id="canvaNote" class="mt18"></div>
+
+        <div class="btn-row mt24">
+          <button class="btn btn-q" data-go="review">العودة للمراجعة</button>
+          <button class="btn btn-q" id="startOver">بدء عرض جديد</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site">
+    <div class="wrap foot-in">
+      <span>منصة منهاج · <span class="en">Minhaj Platform</span></span>
+      <span id="stateTag"></span>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =========================================================
+     1. STATE MODEL — canonical Minhaj project object (§11)
+     ========================================================= */
+
+  var STAGES = {
+    INPUT_RECEIVED: "INPUT_RECEIVED",
+    ANALYZING_CONTENT: "ANALYZING_CONTENT",
+    CONTENT_READY: "CONTENT_READY",
+    BUILDING_STORYBOARD: "BUILDING_STORYBOARD",
+    STORYBOARD_READY: "STORYBOARD_READY",
+    DESIGNING: "DESIGNING",
+    PREVIEW_READY: "PREVIEW_READY",
+    AWAITING_APPROVAL: "AWAITING_APPROVAL",
+    REVISION_REQUESTED: "REVISION_REQUESTED",
+    FINALIZING: "FINALIZING",
+    EXPORT_READY: "EXPORT_READY",
+    COMPLETED: "COMPLETED",
+    ERROR: "ERROR"
+  };
+
+  function blankProject() {
+    return {
+      project_name: "Minhaj Platform",
+      topic: "",
+      language: "ar",
+      target_audience: "",
+      educational_level: "",
+      learning_objectives: [],
+      slides_count: 0,
+      theme: { name: "", primary_color: "", secondary_color: "", background_color: "", font_family: "", direction: "rtl" },
+      slides: [],
+      preview_slides: [],
+      user_review: { status: "pending", requested_edits: [] },
+      export: { canva_available: false, format: null, status: "not_started", resource_url: null },
+      workflow: { current_stage: STAGES.INPUT_RECEIVED, validation_status: "pending", errors: [], warnings: [] }
+    };
+  }
+
+  var S = {
+    screen: "home",
+    project: blankProject(),
+    source: { name: "", type: "", size: 0, text: "", status: "" },
+    config: {},
+    analysis: null,
+    slideIdx: 0,
+    finalIdx: 0,
+    sample: null,
+    downloads: null,
+    capsResolved: false,
+    abort: null,
+    runStep: 0,
+    runError: null
+  };
+
+  var SCREENS = ["home", "upload", "config", "run", "preview", "review", "revision", "final"];
+  var STEPPER = [
+    { key: "upload", label: "الرفع" },
+    { key: "config", label: "الإعدادات" },
+    { key: "run", label: "المعالجة" },
+    { key: "preview", label: "المعاينة" },
+    { key: "review", label: "المراجعة" },
+    { key: "final", label: "التصدير" }
+  ];
+
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function el(html) { var d = document.createElement("div"); d.innerHTML = html; return d.firstElementChild; }
+
+  /* =========================================================
+     2. PERSISTENCE — per-viewer convenience only
+     ========================================================= */
+
+  var LS_KEY = "minhaj.project.v1";
+  function saveLocal() {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify({ project: S.project, source: { name: S.source.name, type: S.source.type, size: S.source.size, text: S.source.text }, config: S.config }));
+    } catch (e) { /* storage unavailable — not fatal */ }
+  }
+  function loadLocal() {
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (!raw) return null;
+      var o = JSON.parse(raw);
+      if (o && o.project && o.project.slides && o.project.slides.length) return o;
+    } catch (e) { }
+    return null;
+  }
+  function clearLocal() { try { localStorage.removeItem(LS_KEY); } catch (e) { } }
+
+  /* =========================================================
+     3. VALIDATOR — §12 JSON validation rules
+     ========================================================= */
+
+  var VALID_STAGES = Object.keys(STAGES);
+
+  function validateProject(p) {
+    var errors = [], warnings = [];
+
+    if (!p.project_name) p.project_name = "Minhaj Platform";
+    if (!p.topic) { p.topic = S.config.title || "عرض تقديمي"; warnings.push("topic كان فارغًا — عُوّض من إعدادات المستخدم."); }
+
+    if (!Array.isArray(p.slides)) { p.slides = []; errors.push("slides ليست مصفوفة."); }
+    if (!Array.isArray(p.learning_objectives)) p.learning_objectives = [];
+    if (!Array.isArray(p.preview_slides)) p.preview_slides = [];
+
+    p.slides = p.slides.filter(function (s) { return s && typeof s === "object"; });
+
+    p.slides.forEach(function (s, i) {
+      s.slide_number = i + 1;                                  // sequential numbering
+      if (!s.type) { s.type = i === 0 ? "cover" : "content"; warnings.push("نوع الشريحة " + (i + 1) + " عُوّض."); }
+      if (!s.title) { s.title = "شريحة " + (i + 1); warnings.push("عنوان الشريحة " + (i + 1) + " عُوّض."); }
+      if (!Array.isArray(s.bullets)) s.bullets = [];
+      s.bullets = s.bullets.map(function (b) { return String(b == null ? "" : b).trim(); }).filter(Boolean);
+      if (s.type !== "cover" && s.bullets.length > 4) {         // max 4 bullets per content slide
+        s.bullets = s.bullets.slice(0, 4);
+        warnings.push("الشريحة " + (i + 1) + " تجاوزت 4 نقاط — قُصّت.");
+      }
+      s.key_message = String(s.key_message || "");
+      s.visual_notes = String(s.visual_notes || "");
+      s.speaker_notes = String(s.speaker_notes || "");
+    });
+
+    p.slides_count = p.slides.length;                           // must match actual count
+    if (!p.slides_count) errors.push("لا توجد شرائح.");
+
+    p.preview_slides = p.preview_slides
+      .map(function (n) { return parseInt(n, 10); })
+      .filter(function (n) { return n >= 1 && n <= p.slides_count; });
+    if (!p.preview_slides.length) p.preview_slides = p.slides_count ? [1, Math.min(2, p.slides_count)] : [];
+
+    var t = p.theme || (p.theme = {});
+    if (!/^#[0-9a-fA-F]{6}$/.test(t.primary_color || "")) t.primary_color = "#0C6152";
+    if (!/^#[0-9a-fA-F]{6}$/.test(t.secondary_color || "")) t.secondary_color = "#A8762A";
+    if (!/^#[0-9a-fA-F]{6}$/.test(t.background_color || "")) t.background_color = "#FAF9F5";
+    if (!t.font_family) t.font_family = "IBM Plex Sans Arabic";
+    if (!t.name) t.name = "أكاديمي مؤسسي";
+    t.direction = p.language === "en" ? "ltr" : "rtl";
+
+    // export claims must match real integrations
+    p.export.canva_available = false;
+    if (p.export.resource_url && typeof p.export.resource_url !== "string") p.export.resource_url = null;
+
+    if (VALID_STAGES.indexOf(p.workflow.current_stage) < 0) {
+      p.workflow.current_stage = STAGES.INPUT_RECEIVED;
+      errors.push("حالة سير عمل غير معروفة.");
+    }
+
+    p.workflow.errors = errors;
+    p.workflow.warnings = warnings;
+    p.workflow.validation_status = errors.length ? "failed" : "passed";
+    return { ok: !errors.length, errors: errors, warnings: warnings };
+  }
+
+  /* =========================================================
+     4. AGENTS — prompts derived from the Minhaj agent spec.
+        The engine is Claude, reached through the sample capability.
+        No AI logic is duplicated in the UI layer.
+     ========================================================= */
+
+  var RULES = [
+    "أنت وكيل ضمن منصة منهاج التعليمية. التزم بالقواعد التالية حرفيًا:",
+    "- لا تكشف أي تفكير داخلي أو خطوات استدلال؛ أعد النتيجة المنظمة فقط.",
+    "- لا تُدخل معلومات تعليمية غير مدعومة بالمادة المرفوعة.",
+    "- لا تدّعي توفّر أي تكامل أو صيغة تصدير أو خط غير متاح.",
+    "- الرد يجب أن يكون JSON صالحًا فقط، بلا أي نص قبله أو بعده."
+  ].join("\n");
+
+  function langLine() {
+    if (S.config.language === "en") return "اكتب كل محتوى الشرائح بالإنجليزية.";
+    if (S.config.language === "ar-en") return "اكتب المحتوى بالعربية، مع إبقاء المصطلحات التقنية بالإنجليزية بين قوسين.";
+    return "اكتب كل محتوى الشرائح بالعربية الفصحى الواضحة.";
+  }
+
+  function sourceExcerpt() {
+    var t = String(S.source.text || "").replace(/\u0000/g, "").trim();
+    return t.length > 12000 ? t.slice(0, 12000) + "\n\n[...المادة مقتطعة...]" : t;
+  }
+
+  var Agents = {
+    analyst: function (signal) {
+      var p = [
+        RULES, "",
+        "دورك: محلل المحتوى التعليمي (Educational Content Analyst).",
+        "حلّل المادة التالية واستخرج نموذج محتوى أكاديمي دقيق.",
+        S.config.audience ? "الفئة المستهدفة التي حددها المستخدم: " + S.config.audience : "",
+        S.config.level ? "المستوى التعليمي الذي حدده المستخدم: " + S.config.level : "",
+        "",
+        "أعد JSON بهذا الشكل فقط:",
+        '{"topic":"","subject":"","target_audience":"","educational_level":"","learning_objectives":["..."],"key_concepts":[{"term":"","definition":""}],"instructional_sequence":["..."],"coverage_notes":"","uncertainties":["..."]}',
+        "",
+        "المادة التعليمية:", "---", sourceExcerpt(), "---"
+      ].join("\n");
+      return S.sample.json(p, { signal: signal, cache: false, modelTier: "default" });
+    },
+
+    storyboard: function (analysis, signal) {
+      var target = S.config.count > 0
+        ? "اجعل عدد الشرائح قريبًا من " + S.config.count + " شريحة."
+        : "حدد عدد الشرائح حسب حجم المحتوى وتعقيده (بين 8 و 25).";
+      var p = [
+        RULES, "",
+        "دورك: مهندس القصة المصورة للعرض (Presentation Storyboard Architect).",
+        "حوّل نموذج المحتوى التالي إلى مخطط شرائح متماسك.",
+        "",
+        "قواعد الشرائح الملزمة:",
+        "- فكرة مركزية واحدة لكل شريحة.",
+        "- حد أقصى 4 نقاط لكل شريحة محتوى، وكل نقطة قصيرة.",
+        "- لا فقرات طويلة إلا إذا كان نوع الشريحة يستلزمها.",
+        "- التسلسل: مقدمة ثم مفاهيم ثم شرح ثم أمثلة/تطبيق ثم ملخص.",
+        "- الشريحة الأولى نوعها cover والأخيرة نوعها summary.",
+        "- أنواع الشرائح المسموحة: cover, agenda, concept, definition, comparison, process, diagram, example, matrix, summary.",
+        "- اقترح توجيهًا بصريًا مناسبًا للموضوع فقط، لا لملء الفراغ.",
+        target, langLine(),
+        "",
+        "أعد JSON بهذا الشكل فقط:",
+        '{"topic":"","target_audience":"","educational_level":"","learning_objectives":["..."],"slides":[{"slide_number":1,"type":"cover","title":"","key_message":"","bullets":[],"visual_notes":"","speaker_notes":""}]}',
+        "",
+        "نموذج المحتوى:", "---", JSON.stringify(analysis), "---"
+      ].join("\n");
+      return S.sample.json(p, { signal: signal, cache: false, modelTier: "default" });
+    },
+
+    design: function (storyboard, signal) {
+      var styleMap = { academic: "أكاديمي مؤسسي رصين", simple: "مبسّط وواضح للطلاب", training: "تدريبي حيوي" };
+      var p = [
+        RULES, "",
+        "دورك: وكيل التصميم (Design Agent).",
+        "اقترح نظامًا بصريًا متسقًا لعرض تعليمي عربي في سياق تعليمي سعودي.",
+        "النمط المطلوب: " + (styleMap[S.config.style] || styleMap.academic) + ".",
+        "الاشتراطات: مساحات بيضاء واسعة، تدرّج بصري مقيّد، طابع مؤسسي، قابلية قراءة عربية عالية، تباين كافٍ للوصولية.",
+        "لا تدّعِ مطابقة أي خط مؤسسي محدد؛ اختر خطًا عربيًا متاحًا على الويب.",
+        "الألوان بصيغة hex سداسية. اختر شرحتين تمثيليتين للمعاينة من أرقام الشرائح الموجودة.",
+        "",
+        "أعد JSON بهذا الشكل فقط:",
+        '{"theme":{"name":"","primary_color":"#RRGGBB","secondary_color":"#RRGGBB","background_color":"#RRGGBB","font_family":"","rationale":""},"preview_slides":[1,2]}',
+        "",
+        "عناوين الشرائح:", "---",
+        JSON.stringify((storyboard.slides || []).map(function (s) { return { n: s.slide_number, t: s.title, type: s.type }; })),
+        "---"
+      ].join("\n");
+      return S.sample.json(p, { signal: signal, cache: false, modelTier: "quick" });
+    },
+
+    revise: function (feedback, signal) {
+      var p = [
+        RULES, "",
+        "دورك: المنسّق الرئيسي — تطبيق تعديلات المستخدم.",
+        "حوّل ملاحظة المستخدم إلى تعليمات تعديل مُهيكلة، ثم طبّقها على الشرائح المتأثرة فقط.",
+        "لا تغيّر الشرائح غير المعنية إطلاقًا: أعدها كما هي حرفيًا.",
+        "احتفظ بترقيم الشرائح متسلسلًا، وبحد أقصى 4 نقاط لكل شريحة محتوى.",
+        langLine(),
+        "",
+        "أعد JSON بهذا الشكل فقط:",
+        '{"requested_edits":[{"target":"slide_2","category":"content","instruction":""}],"slides":[{"slide_number":1,"type":"","title":"","key_message":"","bullets":[],"visual_notes":"","speaker_notes":""}],"theme":null}',
+        "(اجعل theme قيمته null إن لم يطلب المستخدم تغييرًا في التصميم؛ وإلا أعده بنفس شكل الحقل theme.)",
+        "",
+        "ملاحظة المستخدم:", "---", String(feedback).slice(0, 4000), "---",
+        "",
+        "الشرائح الحالية:", "---",
+        JSON.stringify({ theme: S.project.theme, slides: S.project.slides }),
+        "---"
+      ].join("\n");
+      return S.sample.json(p, { signal: signal, cache: false, modelTier: "default" });
+    }
+  };
+
+  /* =========================================================
+     5. CAPABILITIES — resolve once, design for absence
+     ========================================================= */
+
+  function resolveCaps() {
+    if (!window.claude || typeof window.claude.use !== "function") {
+      S.capsResolved = true; renderCapNotices(); return;
+    }
+    window.claude.use("sample").then(function (s) { S.sample = s || null; }).catch(function () { S.sample = null; })
+      .then(function () { return window.claude.use("downloads"); })
+      .then(function (d) { S.downloads = d || null; })
+      .catch(function () { S.downloads = null; })
+      .then(function () { S.capsResolved = true; renderCapNotices(); if (S.screen === "final") exportOptions(); });
+  }
+
+  function renderCapNotices() {
+    var host = $("cfgErr");
+    if (!host) return;
+    if (S.capsResolved && !S.sample) {
+      host.innerHTML = banner("warn",
+        "إنشاء العروض بالذكاء الاصطناعي يحتاج إلى بيئة Claude التي توفّر خدمة التوليد للصفحة، وهي غير متوفّرة هنا. " +
+        "بقية المنصة تعمل بشكل طبيعي: يمكنك تصفّح الواجهة، وفتح عرض محفوظ سابقًا من الصفحة الرئيسية، ومعاينته وتصديره.");
+      $("startRun").disabled = true;
+    } else {
+      host.innerHTML = "";
+      $("startRun").disabled = false;
+    }
+  }
+
+  var ICON = {
+    warn: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 20.5 19h-17z"></path><path d="M12 10v4"></path><path d="M12 16.6h.01"></path></svg>',
+    err: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5.5"></path><path d="M12 16.4h.01"></path></svg>',
+    info: '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5"></path><path d="M12 8h.01"></path></svg>'
+  };
+  function banner(kind, html) {
+    return '<div class="banner banner-' + kind + '">' + ICON[kind] + "<div>" + html + "</div></div>";
+  }
+
+  /* =========================================================
+     6. FILE INTAKE
+     ========================================================= */
+
+  var MAX_BYTES = 20 * 1024 * 1024;
+
+  function fmtSize(b) {
+    if (b < 1024) return b + " بايت";
+    if (b < 1048576) return (b / 1024).toFixed(1) + " كيلوبايت";
+    return (b / 1048576).toFixed(1) + " ميجابايت";
+  }
+
+  function readText(file) {
+    return new Promise(function (res, rej) {
+      var fr = new FileReader();
+      fr.onload = function () { res(String(fr.result || "")); };
+      fr.onerror = function () { rej(new Error("read_failed")); };
+      fr.readAsText(file, "utf-8");
+    });
+  }
+
+  function readPdf(file) {
+    if (typeof window.pdfjsLib === "undefined") return Promise.reject(new Error("pdf_unavailable"));
+    try {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    } catch (e) { }
+    return file.arrayBuffer().then(function (buf) {
+      return window.pdfjsLib.getDocument({ data: buf }).promise;
+    }).then(function (pdf) {
+      var pages = [], n = Math.min(pdf.numPages, 120);
+      var chain = Promise.resolve();
+      for (var i = 1; i <= n; i++) {
+        (function (i) {
+          chain = chain.then(function () { return pdf.getPage(i); })
+            .then(function (pg) { return pg.getTextContent(); })
+            .then(function (tc) {
+              pages.push(tc.items.map(function (it) { return it.str; }).join(" "));
+            });
+        })(i);
+      }
+      return chain.then(function () { return pages.join("\n\n"); });
+    });
+  }
+
+  function acceptFile(file) {
+    $("uploadErr").innerHTML = "";
+    if (!file) return;
+    if (file.size > MAX_BYTES) {
+      $("uploadErr").innerHTML = banner("err", "حجم الملف يتجاوز 20 ميجابايت. يرجى رفع ملف أصغر أو لصق النص مباشرةً.");
+      return;
+    }
+    var name = file.name || "ملف";
+    var lower = name.toLowerCase();
+    var isPdf = lower.endsWith(".pdf") || file.type === "application/pdf";
+    var isTxt = /\.(txt|md|markdown)$/.test(lower) || /^text\//.test(file.type || "");
+    if (!isPdf && !isTxt) {
+      $("uploadErr").innerHTML = banner("err", "صيغة غير مدعومة. الصيغ المدعومة فعليًا هي <code>.txt</code> و <code>.md</code> و <code>.pdf</code> فقط.");
+      return;
+    }
+    if (isPdf && typeof window.pdfjsLib === "undefined") {
+      $("uploadErr").innerHTML = banner("err", "قراءة ملفات PDF غير متاحة في هذه الصفحة. ارفع ملفًا نصيًا أو الصق المحتوى في الحقل أدناه.");
+      return;
+    }
+
+    S.source = { name: name, type: isPdf ? "PDF" : "نص", size: file.size, text: "", status: "reading" };
+    renderFileCard();
+
+    var job = isPdf ? readPdf(file) : readText(file);
+    job.then(function (text) {
+      var clean = String(text || "").replace(/[ \t]+\n/g, "\n").trim();
+      if (clean.replace(/\s/g, "").length < 200) throw new Error("too_short");
+      S.source.text = clean;
+      S.source.status = "ready";
+      renderFileCard();
+      $("toConfig").disabled = false;
+    }).catch(function (e) {
+      S.source.status = "error";
+      renderFileCard();
+      $("toConfig").disabled = true;
+      var msg = e && e.message === "too_short"
+        ? "تعذّر استخراج نص كافٍ من الملف — قد يكون ملفًا ممسوحًا ضوئيًا (صورًا). يرجى لصق النص في الحقل أدناه."
+        : e && e.message === "pdf_unavailable"
+          ? "تعذّر تحميل مُحلّل ملفات PDF في هذه الصفحة. يرجى رفع ملف نصي أو لصق المحتوى أدناه."
+          : "تعذّر معالجة الملف. يرجى المحاولة مرة أخرى أو لصق النص أدناه.";
+      $("uploadErr").innerHTML = banner("err", msg);
+    });
+  }
+
+  function renderFileCard() {
+    var host = $("fileHost");
+    if (!S.source.name) { host.innerHTML = ""; return; }
+    var st = S.source.status;
+    var pill = st === "ready" ? '<span class="pill pill-ok">جاهز</span>'
+      : st === "error" ? '<span class="pill pill-err">فشل</span>'
+        : '<span class="pill pill-wait">جاري القراءة</span>';
+    var chars = S.source.text ? " · " + S.source.text.length.toLocaleString("en-US") + " حرفًا" : "";
+    host.innerHTML =
+      '<div class="card filecard">' +
+      '<span class="ic"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#0C6152" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path></svg></span>' +
+      '<span class="meta"><span class="fn">' + esc(S.source.name) + "</span>" +
+      '<span class="fs">' + esc(S.source.type) + " · " + fmtSize(S.source.size) + esc(chars) + "</span></span>" +
+      pill +
+      '<span class="acts">' +
+      '<button class="btn btn-q" id="replaceFile">استبدال</button>' +
+      '<button class="btn btn-q" id="removeFile">إزالة</button>' +
+      "</span></div>";
+    $("replaceFile").onclick = function () { $("fileInput").click(); };
+    $("removeFile").onclick = function () {
+      S.source = { name: "", type: "", size: 0, text: "", status: "" };
+      $("fileInput").value = "";
+      $("uploadErr").innerHTML = "";
+      $("toConfig").disabled = true;
+      renderFileCard();
+    };
+  }
+
+  /* =========================================================
+     7. ORCHESTRATION RUN
+     ========================================================= */
+
+  var RUN_STEPS = [
+    { key: "analyze", title: "تحليل المحتوى", msg: "جاري تحليل المحتوى التعليمي...", stage: STAGES.ANALYZING_CONTENT },
+    { key: "story", title: "بناء مخطط العرض", msg: "جاري بناء مخطط العرض...", stage: STAGES.BUILDING_STORYBOARD },
+    { key: "design", title: "التصميم", msg: "جاري إعداد التصميم...", stage: STAGES.DESIGNING },
+    { key: "review", title: "المراجعة", msg: "بانتظار مراجعتك.", stage: STAGES.AWAITING_APPROVAL },
+    { key: "export", title: "التصدير", msg: "بانتظار الاعتماد.", stage: STAGES.EXPORT_READY }
+  ];
+
+  function renderTrack() {
+    var host = $("track");
+    host.innerHTML = RUN_STEPS.map(function (st, i) {
+      var cls = i < S.runStep ? "done" : i === S.runStep ? "now" : "";
+      var mark = i < S.runStep ? "✓" : i === S.runStep ? "●" : "○";
+      var sub = i < S.runStep ? "اكتمل" : i === S.runStep ? st.msg : "في الانتظار";
+      var spin = (i === S.runStep && i < 3 && !S.runError) ? '<span class="spin" aria-hidden="true"></span>' : "";
+      return '<div class="trow ' + cls + '"><span class="badge" aria-hidden="true">' + mark + "</span>" +
+        '<span><span class="tt">' + esc(st.title) + '</span><span class="ts">' + esc(sub) + "</span></span>" + spin + "</div>";
+    }).join("");
+  }
+
+  function friendlyError(e) {
+    var code = e && e.code;
+    var map = {
+      not_granted: "لم يُسمح لهذه الصفحة باستخدام Claude، لذلك لا يمكن توليد العرض. يمكنك السماح بذلك عند ظهور طلب الإذن ثم إعادة المحاولة.",
+      sampling_disabled: "خدمة التوليد غير متاحة لهذا الحساب أو المؤسسة.",
+      not_declared: "خدمة التوليد غير معلنة لهذه الصفحة.",
+      capability_disabled: "خدمة التوليد غير متاحة في هذا العرض للصفحة.",
+      capability_removed: "خدمة التوليد غير متاحة في هذه النسخة من التطبيق.",
+      rate_limited: "تم تجاوز حد الاستخدام مؤقتًا. يرجى الانتظار قليلًا ثم إعادة المحاولة.",
+      session_expired: "انتهت الجلسة. يرجى تسجيل الدخول مرة أخرى ثم إعادة المحاولة.",
+      prompt_too_large: "المادة أطول من الحد المسموح. جرّب رفع جزء أصغر من المحتوى.",
+      invalid_json: "تعذّر قراءة مخرجات المعالجة. يرجى إعادة المحاولة.",
+      refused: "تعذّر إكمال المعالجة لهذه المادة. جرّب مادة أخرى أو أعد صياغة المحتوى.",
+      empty_completion: "لم تُنتج المعالجة أي مخرجات. جرّب مادة أخرى أو محتوى أقل.",
+      cancelled: "تم إيقاف العملية."
+    };
+    return map[code] || "تعذّر إكمال العملية. يرجى المحاولة مرة أخرى.";
+  }
+
+  function fail(stage, e) {
+    S.runError = e;
+    S.project.workflow.current_stage = STAGES.ERROR;
+    S.project.workflow.errors = [String((e && e.code) || "unknown")];
+    renderTrack();
+    var retry = (e && e.code === "cancelled") ? "" :
+      '<div class="btn-row mt12"><button class="btn btn-o" id="retryRun">إعادة المحاولة</button></div>';
+    $("runErr").innerHTML = banner("err", esc(friendlyError(e)) + retry);
+    var r = $("retryRun"); if (r) r.onclick = runPipeline;
+    renderChrome();
+  }
+
+  function runPipeline() {
+    if (!S.sample) { renderCapNotices(); go("config"); return; }
+
+    S.runError = null;
+    S.runStep = 0;
+    $("runErr").innerHTML = "";
+    S.abort = new AbortController();
+    var sig = S.abort.signal;
+
+    S.project = blankProject();
+    S.project.language = S.config.language;
+    S.project.workflow.current_stage = STAGES.ANALYZING_CONTENT;
+    renderTrack(); renderChrome();
+
+    Agents.analyst(sig).then(function (analysis) {
+      S.analysis = analysis || {};
+      S.project.workflow.current_stage = STAGES.CONTENT_READY;
+      S.runStep = 1;
+      S.project.workflow.current_stage = STAGES.BUILDING_STORYBOARD;
+      renderTrack(); renderChrome();
+      return Agents.storyboard(S.analysis, sig);
+    }).then(function (sb) {
+      sb = sb || {};
+      S.project.topic = S.config.title || sb.topic || (S.analysis && S.analysis.topic) || "";
+      S.project.target_audience = S.config.audience || sb.target_audience || (S.analysis && S.analysis.target_audience) || "";
+      S.project.educational_level = S.config.level || sb.educational_level || (S.analysis && S.analysis.educational_level) || "";
+      S.project.learning_objectives = sb.learning_objectives || (S.analysis && S.analysis.learning_objectives) || [];
+      S.project.slides = Array.isArray(sb.slides) ? sb.slides : [];
+      S.project.workflow.current_stage = STAGES.STORYBOARD_READY;
+
+      var v1 = validateProject(S.project);
+      if (!v1.ok) throw { code: "invalid_json", message: v1.errors.join(" ") };
+
+      S.runStep = 2;
+      S.project.workflow.current_stage = STAGES.DESIGNING;
+      renderTrack(); renderChrome();
+      return Agents.design(S.project, sig);
+    }).then(function (d) {
+      d = d || {};
+      if (d.theme) S.project.theme = Object.assign(S.project.theme, d.theme);
+      if (Array.isArray(d.preview_slides)) S.project.preview_slides = d.preview_slides;
+      S.project.export = { canva_available: false, format: null, status: "not_started", resource_url: null };
+
+      var v2 = validateProject(S.project);
+      if (!v2.ok) throw { code: "invalid_json", message: v2.errors.join(" ") };
+
+      S.project.workflow.current_stage = STAGES.PREVIEW_READY;
+      S.runStep = 3;
+      renderTrack();
+      S.slideIdx = 0;
+      S.project.workflow.current_stage = STAGES.AWAITING_APPROVAL;
+      S.project.user_review = { status: "pending", requested_edits: [] };
+      saveLocal();
+      go("preview");
+    }).catch(function (e) { fail("run", e); });
+  }
+
+  function applyRevision(feedback) {
+    if (!S.sample) return;
+    $("revErr").innerHTML = "";
+    S.runError = null;
+    S.runStep = 1;
+    S.abort = new AbortController();
+    S.project.workflow.current_stage = STAGES.REVISION_REQUESTED;
+    S.project.user_review.status = "revision_requested";
+    go("run");
+    $("runLead").textContent = "جاري تطبيق التعديلات على الشرائح المعنية...";
+    renderTrack();
+
+    Agents.revise(feedback, S.abort.signal).then(function (r) {
+      r = r || {};
+      if (Array.isArray(r.slides) && r.slides.length) S.project.slides = r.slides;
+      if (r.theme && typeof r.theme === "object") S.project.theme = Object.assign(S.project.theme, r.theme);
+      var edits = Array.isArray(r.requested_edits) ? r.requested_edits : [];
+      S.project.user_review = {
+        status: "revised",
+        requested_edits: (S.project.user_review.requested_edits || []).concat(edits.map(function (e) {
+          return { target: String(e.target || ""), category: String(e.category || "content"), instruction: String(e.instruction || ""), at: new Date().toISOString() };
+        }))
+      };
+      var v = validateProject(S.project);
+      if (!v.ok) throw { code: "invalid_json", message: v.errors.join(" ") };
+      S.project.workflow.current_stage = STAGES.AWAITING_APPROVAL;
+      S.runStep = 3;
+      S.slideIdx = 0;
+      saveLocal();
+      $("runLead").textContent = "قد تستغرق العملية دقيقة إلى ثلاث دقائق حسب حجم المادة. لا تغلق الصفحة.";
+      go("preview");
+    }).catch(function (e) { fail("revision", e); });
+  }
+
+  /* =========================================================
+     8. SLIDE RENDERING
+     ========================================================= */
+
+  function slideMarkup(s, theme, forThumb) {
+    var t = theme || S.project.theme;
+    var dir = t.direction === "ltr" ? "ltr" : "rtl";
+    var isCover = s.type === "cover";
+    var bullets = (s.bullets || []).map(function (b) {
+      return '<li><i style="background:' + esc(t.secondary_color) + '"></i><span>' + esc(b) + "</span></li>";
+    }).join("");
+    return '<div class="slide ' + (isCover ? "cover" : "") + '" dir="' + dir + '" style="background:' + esc(t.background_color) + ';color:#12211F">' +
+      '<div class="slide-bar" style="background:' + esc(t.primary_color) + '"></div>' +
+      '<div class="slide-in">' +
+      (isCover ? "" : '<div style="font-size:17px;color:' + esc(t.secondary_color) + ';font-weight:600;margin-bottom:12px">' + esc(typeLabel(s.type)) + "</div>") +
+      "<h2>" + esc(s.title) + "</h2>" +
+      '<div class="srule"><i style="background:' + esc(t.primary_color) + '"></i><i style="background:' + esc(t.secondary_color) + ';width:26px"></i></div>' +
+      (s.key_message ? '<p class="km" style="color:' + (isCover ? esc(t.primary_color) : "#3B4A47") + '">' + esc(s.key_message) + "</p>" : "") +
+      (bullets ? "<ul>" + bullets + "</ul>" : "") +
+      '<div class="sfoot" style="color:#97A19E;border-top:1px solid #E7E4DB">' +
+      "<span>" + esc(S.project.topic || "منصة منهاج") + "</span>" +
+      '<span class="en">' + (s.slide_number < 10 ? "0" : "") + s.slide_number + "</span>" +
+      "</div></div></div>";
+  }
+
+  function typeLabel(t) {
+    var m = {
+      cover: "الغلاف", agenda: "المحاور", concept: "مفهوم", definition: "تعريف",
+      comparison: "مقارنة", process: "خطوات", diagram: "رسم توضيحي",
+      example: "مثال تطبيقي", matrix: "جدول", summary: "الملخص", content: "محتوى"
+    };
+    return m[t] || t;
+  }
+
+  function paintStage(stageEl, idx) {
+    var s = S.project.slides[idx];
+    if (!s) { stageEl.innerHTML = ""; return; }
+    stageEl.innerHTML = slideMarkup(s, S.project.theme);
+    fitStage(stageEl);
+  }
+
+  function fitStage(stageEl) {
+    var node = stageEl.querySelector(".slide");
+    if (!node) return;
+    var scale = stageEl.clientWidth / 1280;
+    node.style.transform = "scale(" + scale + ")";
+  }
+
+  function renderThumbs(host, idx, onPick) {
+    host.innerHTML = S.project.slides.map(function (s, i) {
+      return '<button class="thumb" role="tab" aria-current="' + (i === idx) + '" data-i="' + i + '">' +
+        '<span class="tnum"><span class="en">' + (s.slide_number < 10 ? "0" : "") + s.slide_number + "</span><span>" + esc(typeLabel(s.type)) + "</span></span>" +
+        '<span class="ttl">' + esc(s.title) + "</span></button>";
+    }).join("");
+    Array.prototype.forEach.call(host.querySelectorAll(".thumb"), function (b) {
+      b.onclick = function () { onPick(parseInt(b.getAttribute("data-i"), 10)); };
+    });
+  }
+
+  function factsMarkup() {
+    var p = S.project, t = p.theme;
+    var statusMap = { pending: "بانتظار المراجعة", revision_requested: "تعديلات مطلوبة", revised: "مُعدَّل — بانتظار الاعتماد", approved: "معتمد" };
+    return [
+      ["عنوان العرض", esc(p.topic || "—")],
+      ["الفئة المستهدفة", esc(p.target_audience || "—")],
+      ["المستوى التعليمي", esc(p.educational_level || "—")],
+      ["عدد الشرائح", '<span class="en">' + p.slides_count + "</span>"],
+      ["النمط البصري", esc(t.name || "—") + '<div class="swatches mt12"><span class="sw" style="background:' + esc(t.primary_color) + '"></span><span class="sw" style="background:' + esc(t.secondary_color) + '"></span><span class="sw" style="background:' + esc(t.background_color) + '"></span></div>'],
+      ["الخط", '<span class="en">' + esc(t.font_family) + "</span>"],
+      ["اللغة والاتجاه", (p.language === "en" ? "الإنجليزية" : "العربية") + " · " + t.direction.toUpperCase()],
+      ["حالة الاعتماد", esc(statusMap[p.user_review.status] || p.user_review.status)]
+    ].map(function (r) { return "<div class='fact'><dt>" + r[0] + "</dt><dd>" + r[1] + "</dd></div>"; }).join("");
+  }
+
+  /* =========================================================
+     9. EXPORT — only genuinely implemented formats
+     ========================================================= */
+
+  // A save channel that never leaves the browser.
+  // Inside Claude: the downloads capability. Outside Claude (plain static hosting):
+  // an ordinary <a download>. No network request either way.
+  function canSaveLocally() {
+    return !window.claude || typeof window.claude.use !== "function";
+  }
+
+  function offerFile(filename, data) {
+    if (S.downloads) return S.downloads.save({ filename: filename, data: data });
+    if (canSaveLocally()) {
+      return new Promise(function (res, rej) {
+        try {
+          var blob = (data instanceof Blob) ? data : new Blob([data], { type: "application/json;charset=utf-8" });
+          // Chromium drops a non-ASCII download name on a blob: URL (the file lands as
+          // "download", with no extension), so fall back to an ASCII name here.
+          var ext = (filename.match(/\.[A-Za-z0-9]+$/) || [""])[0];
+          var safe = /^[\u0020-\u007E]+$/.test(filename) ? filename : ("minhaj-presentation" + ext);
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = url; a.download = safe;
+          document.body.appendChild(a); a.click();
+          setTimeout(function () { URL.revokeObjectURL(url); if (a.parentNode) a.parentNode.removeChild(a); }, 1500);
+          res({ status: "saved" });
+        } catch (e) { rej({ code: "unavailable", message: String(e) }); }
+      });
+    }
+    return Promise.reject({ code: "unavailable", message: "no save channel" });
+  }
+
+  function exportOptions() {
+    var have = !!S.downloads || canSaveLocally();
+    var host = $("exportHost");
+
+    var items = [];
+    items.push({
+      key: "pptx",
+      title: "تصدير PPTX",
+      desc: "ملف PowerPoint يحتوي كل الشرائح بنصوصها وترتيبها، بالاتجاه من اليمين إلى اليسار.",
+      enabled: have,
+      why: "حفظ الملفات غير متاح في هذا العرض للصفحة."
+    });
+    items.push({
+      key: "json",
+      title: "تصدير JSON",
+      desc: "بيانات العرض المُهيكلة كاملةً وفق عقد بيانات منهاج — للاستخدام في أدوات أخرى.",
+      enabled: have,
+      why: "حفظ الملفات غير متاح في هذا العرض للصفحة."
+    });
+
+    host.innerHTML = items.map(function (it) {
+      return '<div class="exp"><h4>' + esc(it.title) + "</h4><p>" + esc(it.desc) + "</p>" +
+        (it.enabled
+          ? '<button class="btn btn-p" data-exp="' + it.key + '">' + esc(it.title) + "</button>"
+          : '<div class="banner banner-warn">' + ICON.warn + "<div>غير متاح الآن: " + esc(it.why) + "</div></div>") +
+        "</div>";
+    }).join("");
+
+    Array.prototype.forEach.call(host.querySelectorAll("[data-exp]"), function (b) {
+      b.onclick = function () { doExport(b.getAttribute("data-exp")); };
+    });
+
+    $("canvaNote").innerHTML = banner("info",
+      "<b>Canva:</b> لا يوجد تكامل فعلي مع Canva في هذه النسخة، ولذلك لا يُعرض زر «فتح في Canva» ولا يُنشأ أي رابط. " +
+      "تصدير PDF أيضًا غير مُنفَّذ هنا؛ الصيغ المتاحة فعليًا هي المذكورة أعلاه.");
+  }
+
+  function safeName() {
+    var base = (S.project.topic || "minhaj-presentation").replace(/[\\/:*?"<>|]+/g, " ").trim().slice(0, 60);
+    return base || "minhaj-presentation";
+  }
+
+  /* --- dependency-free OOXML .pptx writer (store-only ZIP) --- */
+
+  var CRC_TABLE = (function () {
+    var t = new Uint32Array(256);
+    for (var n = 0; n < 256; n++) {
+      var c = n;
+      for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+
+  function crc32(bytes) {
+    var c = 0xFFFFFFFF;
+    for (var i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+
+  function zipStore(files) {
+    var enc = new TextEncoder();
+    var parts = [], central = [], offset = 0;
+
+    function u16(n) { return [n & 255, (n >>> 8) & 255]; }
+    function u32(n) { return [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255]; }
+
+    files.forEach(function (f) {
+      var nameB = enc.encode(f.name);
+      var dataB = enc.encode(f.data);
+      var crc = crc32(dataB);
+      var lh = [].concat(u32(0x04034b50), u16(20), u16(0x0800), u16(0), u16(0), u16(0),
+        u32(crc), u32(dataB.length), u32(dataB.length), u16(nameB.length), u16(0));
+      parts.push(new Uint8Array(lh), nameB, dataB);
+      central.push({ name: nameB, crc: crc, size: dataB.length, offset: offset });
+      offset += lh.length + nameB.length + dataB.length;
+    });
+
+    var cdParts = [], cdSize = 0;
+    central.forEach(function (e) {
+      var ch = [].concat(u32(0x02014b50), u16(20), u16(20), u16(0x0800), u16(0), u16(0), u16(0),
+        u32(e.crc), u32(e.size), u32(e.size), u16(e.name.length), u16(0), u16(0), u16(0), u16(0),
+        u32(0), u32(e.offset));
+      cdParts.push(new Uint8Array(ch), e.name);
+      cdSize += ch.length + e.name.length;
+    });
+
+    var eocd = new Uint8Array([].concat(u32(0x06054b50), u16(0), u16(0),
+      u16(central.length), u16(central.length), u32(cdSize), u32(offset), u16(0)));
+
+    return new Blob(parts.concat(cdParts, [eocd]), {
+      type: "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    });
+  }
+
+  function xe(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&apos;")
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "");
+  }
+
+  var XMLH = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+  var NS_A = "http://schemas.openxmlformats.org/drawingml/2006/main";
+  var NS_P = "http://schemas.openxmlformats.org/presentationml/2006/main";
+  var NS_R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+  var EMU_W = 12192000, EMU_H = 6858000;
+
+  function pptxTextBox(id, name, x, y, w, h, paras) {
+    return '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="' + name + '"/>' +
+      '<p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr>' +
+      '<p:spPr><a:xfrm><a:off x="' + x + '" y="' + y + '"/><a:ext cx="' + w + '" cy="' + h + '"/></a:xfrm>' +
+      '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr>' +
+      '<p:txBody><a:bodyPr wrap="square" lIns="0" rIns="0" tIns="0" bIns="0"><a:normAutofit/></a:bodyPr>' +
+      "<a:lstStyle/>" + paras + "</p:txBody></p:sp>";
+  }
+
+  function pptxPara(text, opt) {
+    opt = opt || {};
+    var rtl = opt.rtl ? '1' : '0';
+    var algn = opt.rtl ? "r" : "l";
+    var pPr = '<a:pPr rtl="' + rtl + '" algn="' + algn + '"' +
+      (opt.bullet ? ' marR="285750" indent="-285750"' : "") + ">" +
+      '<a:lnSpc><a:spcPct val="' + (opt.lnSpc || 150000) + '"/></a:lnSpc>' +
+      '<a:spcBef><a:spcPts val="' + (opt.spcBef || 0) + '"/></a:spcBef>' +
+      (opt.bullet ? '<a:buFont typeface="Arial"/><a:buChar char="•"/>' : "<a:buNone/>") +
+      "</a:pPr>";
+    var rPr = '<a:rPr lang="ar-SA" sz="' + (opt.sz || 1800) + '" b="' + (opt.b ? 1 : 0) + '" dirty="0">' +
+      '<a:solidFill><a:srgbClr val="' + (opt.color || "12211F") + '"/></a:solidFill>' +
+      '<a:latin typeface="Arial"/><a:cs typeface="Arial"/></a:rPr>';
+    return "<a:p>" + pPr + "<a:r>" + rPr + "<a:t>" + xe(text) + "</a:t></a:r></a:p>";
+  }
+
+  function pptxRect(id, x, y, w, h, color) {
+    return '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="bar' + id + '"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>' +
+      '<p:spPr><a:xfrm><a:off x="' + x + '" y="' + y + '"/><a:ext cx="' + w + '" cy="' + h + '"/></a:xfrm>' +
+      '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>' +
+      '<a:solidFill><a:srgbClr val="' + color + '"/></a:solidFill><a:ln><a:noFill/></a:ln></p:spPr>' +
+      '<p:txBody><a:bodyPr/><a:lstStyle/><a:p><a:endParaRPr lang="ar-SA"/></a:p></p:txBody></p:sp>';
+  }
+
+  function hex(c) { return String(c || "").replace("#", "").toUpperCase() || "000000"; }
+
+  function slideXml(s, t, rtl) {
+    var P = hex(t.primary_color), A2 = hex(t.secondary_color), BGC = hex(t.background_color);
+    var M = 685800, W = EMU_W - 2 * M;
+    var shapes = "";
+    var id = 2;
+
+    shapes += pptxRect(id++, rtl ? EMU_W - 91440 : 0, 0, 91440, EMU_H, P);
+
+    var isCover = s.type === "cover";
+    var y = isCover ? 2200000 : 640080;
+
+    if (!isCover) {
+      shapes += pptxTextBox(id++, "kicker", M, y, W, 274320,
+        pptxPara(typeLabel(s.type), { rtl: rtl, sz: 1200, b: true, color: A2, lnSpc: 100000 }));
+      y += 380000;
+    }
+
+    shapes += pptxTextBox(id++, "title", M, y, W, 1097280,
+      pptxPara(s.title || "", { rtl: rtl, sz: isCover ? 3600 : 2600, b: true, lnSpc: 120000 }));
+    y += isCover ? 1150000 : 980000;
+
+    shapes += pptxRect(id++, rtl ? (M + W - 640080) : M, y, 640080, 45720, P);
+    shapes += pptxRect(id++, rtl ? (M + W - 850000) : (M + 685800), y, 182880, 45720, A2);
+    y += 260000;
+
+    if (s.key_message) {
+      shapes += pptxTextBox(id++, "km", M, y, W, 640080,
+        pptxPara(s.key_message, { rtl: rtl, sz: 1600, color: "3B4A47", lnSpc: 140000 }));
+      y += 700000;
+    }
+
+    if ((s.bullets || []).length) {
+      var paras = s.bullets.map(function (b) {
+        return pptxPara(b, { rtl: rtl, sz: 1500, bullet: true, lnSpc: 140000, spcBef: 700 });
+      }).join("");
+      shapes += pptxTextBox(id++, "body", M, y, W, Math.max(600000, EMU_H - y - 900000), paras);
+    }
+
+    shapes += pptxTextBox(id++, "num", rtl ? M : (M + W - 640080), EMU_H - 640080, 640080, 274320,
+      pptxPara(String(s.slide_number), { rtl: !rtl, sz: 1000, color: "97A19E", lnSpc: 100000 }));
+
+    return XMLH + '<p:sld xmlns:a="' + NS_A + '" xmlns:r="' + NS_R + '" xmlns:p="' + NS_P + '">' +
+      "<p:cSld><p:bg><p:bgPr><a:solidFill><a:srgbClr val=\"" + BGC + "\"/></a:solidFill><a:effectLst/></p:bgPr></p:bg>" +
+      '<p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>' +
+      '<p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>' +
+      shapes + "</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>";
+  }
+
+  function themeXml() {
+    function fill() {
+      return "<a:fillStyleLst>" +
+        '<a:solidFill><a:schemeClr val="phClr"/></a:solidFill>' +
+        '<a:solidFill><a:schemeClr val="phClr"/></a:solidFill>' +
+        '<a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:fillStyleLst>';
+    }
+    return XMLH + '<a:theme xmlns:a="' + NS_A + '" name="Minhaj"><a:themeElements>' +
+      "<a:clrScheme name=\"Minhaj\">" +
+      '<a:dk1><a:sysClr val="windowText" lastClr="000000"/></a:dk1>' +
+      '<a:lt1><a:sysClr val="window" lastClr="FFFFFF"/></a:lt1>' +
+      '<a:dk2><a:srgbClr val="12211F"/></a:dk2><a:lt2><a:srgbClr val="FAF9F5"/></a:lt2>' +
+      '<a:accent1><a:srgbClr val="0C6152"/></a:accent1><a:accent2><a:srgbClr val="A8762A"/></a:accent2>' +
+      '<a:accent3><a:srgbClr val="196E5F"/></a:accent3><a:accent4><a:srgbClr val="5C6B68"/></a:accent4>' +
+      '<a:accent5><a:srgbClr val="C4DCD4"/></a:accent5><a:accent6><a:srgbClr val="E3D2AE"/></a:accent6>' +
+      '<a:hlink><a:srgbClr val="0C6152"/></a:hlink><a:folHlink><a:srgbClr val="A8762A"/></a:folHlink></a:clrScheme>' +
+      '<a:fontScheme name="Minhaj">' +
+      '<a:majorFont><a:latin typeface="Arial"/><a:ea typeface=""/><a:cs typeface="Arial"/></a:majorFont>' +
+      '<a:minorFont><a:latin typeface="Arial"/><a:ea typeface=""/><a:cs typeface="Arial"/></a:minorFont></a:fontScheme>' +
+      '<a:fmtScheme name="Minhaj">' + fill() +
+      "<a:lnStyleLst>" +
+      '<a:ln w="6350"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:prstDash val="solid"/></a:ln>' +
+      '<a:ln w="12700"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:prstDash val="solid"/></a:ln>' +
+      '<a:ln w="19050"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:prstDash val="solid"/></a:ln>' +
+      "</a:lnStyleLst>" +
+      "<a:effectStyleLst>" +
+      "<a:effectStyle><a:effectLst/></a:effectStyle>" +
+      "<a:effectStyle><a:effectLst/></a:effectStyle>" +
+      "<a:effectStyle><a:effectLst/></a:effectStyle>" +
+      "</a:effectStyleLst>" +
+      "<a:bgFillStyleLst>" +
+      '<a:solidFill><a:schemeClr val="phClr"/></a:solidFill>' +
+      '<a:solidFill><a:schemeClr val="phClr"/></a:solidFill>' +
+      '<a:solidFill><a:schemeClr val="phClr"/></a:solidFill>' +
+      "</a:bgFillStyleLst></a:fmtScheme>" +
+      "</a:themeElements><a:objectDefaults/><a:extraClrSchemeLst/></a:theme>";
+  }
+
+  function makePptx() {
+    var t = S.project.theme;
+    var rtl = S.project.language !== "en";
+    var slides = S.project.slides;
+    var files = [];
+
+    var ctOverrides = slides.map(function (_, i) {
+      return '<Override PartName="/ppt/slides/slide' + (i + 1) +
+        '.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>';
+    }).join("");
+
+    files.push({
+      name: "[Content_Types].xml",
+      data: XMLH + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+        '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+        '<Default Extension="xml" ContentType="application/xml"/>' +
+        '<Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/>' +
+        '<Override PartName="/ppt/slideMasters/slideMaster1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml"/>' +
+        '<Override PartName="/ppt/slideLayouts/slideLayout1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml"/>' +
+        '<Override PartName="/ppt/theme/theme1.xml" ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/>' +
+        ctOverrides + "</Types>"
+    });
+
+    files.push({
+      name: "_rels/.rels",
+      data: XMLH + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+        '<Relationship Id="rId1" Type="' + NS_R + '/officeDocument" Target="ppt/presentation.xml"/></Relationships>'
+    });
+
+    var sldIds = slides.map(function (_, i) {
+      return '<p:sldId id="' + (256 + i) + '" r:id="rId' + (i + 2) + '"/>';
+    }).join("");
+
+    files.push({
+      name: "ppt/presentation.xml",
+      data: XMLH + '<p:presentation xmlns:a="' + NS_A + '" xmlns:r="' + NS_R + '" xmlns:p="' + NS_P +
+        '" rtl="' + (rtl ? 1 : 0) + '" saveSubsetFonts="1">' +
+        '<p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst>' +
+        "<p:sldIdLst>" + sldIds + "</p:sldIdLst>" +
+        '<p:sldSz cx="' + EMU_W + '" cy="' + EMU_H + '"/><p:notesSz cx="' + EMU_H + '" cy="' + EMU_W + '"/>' +
+        "</p:presentation>"
+    });
+
+    var presRels = '<Relationship Id="rId1" Type="' + NS_R + '/slideMaster" Target="slideMasters/slideMaster1.xml"/>' +
+      slides.map(function (_, i) {
+        return '<Relationship Id="rId' + (i + 2) + '" Type="' + NS_R + '/slide" Target="slides/slide' + (i + 1) + '.xml"/>';
+      }).join("") +
+      '<Relationship Id="rId' + (slides.length + 2) + '" Type="' + NS_R + '/theme" Target="theme/theme1.xml"/>';
+
+    files.push({
+      name: "ppt/_rels/presentation.xml.rels",
+      data: XMLH + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + presRels + "</Relationships>"
+    });
+
+    var emptyTree = '<p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>' +
+      '<p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr></p:spTree>';
+
+    files.push({
+      name: "ppt/slideMasters/slideMaster1.xml",
+      data: XMLH + '<p:sldMaster xmlns:a="' + NS_A + '" xmlns:r="' + NS_R + '" xmlns:p="' + NS_P + '">' +
+        "<p:cSld><p:bg><p:bgPr><a:solidFill><a:srgbClr val=\"" + hex(t.background_color) + "\"/></a:solidFill><a:effectLst/></p:bgPr></p:bg>" +
+        emptyTree + "</p:cSld>" +
+        '<p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/>' +
+        '<p:sldLayoutIdLst><p:sldLayoutId id="2147483649" r:id="rId1"/></p:sldLayoutIdLst>' +
+        "</p:sldMaster>"
+    });
+
+    files.push({
+      name: "ppt/slideMasters/_rels/slideMaster1.xml.rels",
+      data: XMLH + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+        '<Relationship Id="rId1" Type="' + NS_R + '/slideLayout" Target="../slideLayouts/slideLayout1.xml"/>' +
+        '<Relationship Id="rId2" Type="' + NS_R + '/theme" Target="../theme/theme1.xml"/></Relationships>'
+    });
+
+    files.push({
+      name: "ppt/slideLayouts/slideLayout1.xml",
+      data: XMLH + '<p:sldLayout xmlns:a="' + NS_A + '" xmlns:r="' + NS_R + '" xmlns:p="' + NS_P + '" type="blank" preserve="1">' +
+        "<p:cSld name=\"Blank\">" + emptyTree + "</p:cSld>" +
+        "<p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sldLayout>"
+    });
+
+    files.push({
+      name: "ppt/slideLayouts/_rels/slideLayout1.xml.rels",
+      data: XMLH + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+        '<Relationship Id="rId1" Type="' + NS_R + '/slideMaster" Target="../slideMasters/slideMaster1.xml"/></Relationships>'
+    });
+
+    files.push({ name: "ppt/theme/theme1.xml", data: themeXml() });
+
+    slides.forEach(function (s, i) {
+      files.push({ name: "ppt/slides/slide" + (i + 1) + ".xml", data: slideXml(s, t, rtl) });
+      files.push({
+        name: "ppt/slides/_rels/slide" + (i + 1) + ".xml.rels",
+        data: XMLH + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+          '<Relationship Id="rId1" Type="' + NS_R + '/slideLayout" Target="../slideLayouts/slideLayout1.xml"/></Relationships>'
+      });
+    });
+
+    return Promise.resolve(zipStore(files));
+  }
+
+  function doExport(kind) {
+    var msg = $("exportMsg");
+    msg.innerHTML = banner("info", "جاري تجهيز الملف...");
+    S.project.export.status = "in_progress";
+
+    var work;
+    if (kind === "pptx") {
+      work = makePptx().then(function (blob) {
+        return offerFile(safeName() + ".pptx", blob);
+      }).then(function () { S.project.export.format = "PPTX"; });
+    } else {
+      work = offerFile(safeName() + ".json", JSON.stringify(S.project, null, 2))
+        .then(function () { S.project.export.format = "JSON"; });
+    }
+
+    work.then(function () {
+      S.project.export.status = "completed";
+      S.project.workflow.current_stage = STAGES.COMPLETED;
+      saveLocal(); renderChrome();
+      msg.innerHTML = banner("info", "تم تجهيز الملف وحفظه بصيغة <b>" + esc(S.project.export.format) + "</b>.");
+    }).catch(function (e) {
+      S.project.export.status = "failed";
+      var code = e && e.code;
+      var m = code === "declined" ? "أُلغي الحفظ."
+        : code === "rate_limited" ? "طلب حفظ آخر قيد الانتظار. حاول بعد لحظات."
+          : code === "unavailable" || code === "not_granted" ? "حفظ الملفات غير متاح في هذا العرض للصفحة."
+            : "تعذّر تجهيز الملف. يرجى المحاولة مرة أخرى.";
+      msg.innerHTML = banner(code === "declined" ? "warn" : "err", esc(m));
+    });
+  }
+
+  /* =========================================================
+     10. ROUTING + CHROME
+     ========================================================= */
+
+  function go(name) {
+    S.screen = name;
+    SCREENS.forEach(function (k) {
+      var n = $("s-" + k);
+      if (n) n.classList.toggle("on", k === name);
+    });
+    window.scrollTo(0, 0);
+    renderChrome();
+    if (name === "preview") renderPreview();
+    if (name === "review") renderReview();
+    if (name === "final") renderFinal();
+    if (name === "revision") renderRevision();
+    if (name === "config") renderCapNotices();
+  }
+
+  function renderChrome() {
+    var idx = STEPPER.map(function (s) { return s.key; }).indexOf(S.screen);
+    var showStepper = idx >= 0 || S.screen === "revision";
+    $("stepperWrap").hidden = !showStepper;
+    if (showStepper) {
+      var active = S.screen === "revision" ? 4 : idx;
+      $("stepper").innerHTML = STEPPER.map(function (s, i) {
+        var cls = i < active ? "done" : i === active ? "now" : "";
+        return '<div class="st ' + cls + '" role="listitem"><span class="st-dot"></span>' + esc(s.label) + "</div>";
+      }).join("");
+      $("headStep").innerHTML = "المرحلة <b>" + (active + 1) + "</b> من <b>" + STEPPER.length + "</b>";
+    } else {
+      $("headStep").innerHTML = "";
+    }
+    $("stateTag").innerHTML = '<span class="en">' + esc(S.project.workflow.current_stage) + "</span>";
+  }
+
+  function renderPreview() {
+    if (!S.project.slides.length) {
+      $("pvFacts").innerHTML = "";
+      $("stage").innerHTML = '<div class="state"><h3>لم يتم إنشاء عرض تقديمي بعد.</h3><p>ابدأ برفع مادتك التعليمية.</p></div>';
+      return;
+    }
+    $("pvFacts").innerHTML = factsMarkup();
+    if (S.slideIdx >= S.project.slides.length) S.slideIdx = 0;
+    renderThumbs($("thumbs"), S.slideIdx, function (i) { S.slideIdx = i; renderPreview(); });
+    paintStage($("stage"), S.slideIdx);
+    $("slidePos").innerHTML = '<span class="en">' + (S.slideIdx + 1) + " / " + S.project.slides.length + "</span>";
+    $("prevSlide").disabled = S.slideIdx === 0;
+    $("nextSlide").disabled = S.slideIdx === S.project.slides.length - 1;
+    var s = S.project.slides[S.slideIdx];
+    var bits = [];
+    if (s.visual_notes) bits.push("<b>التوجيه البصري:</b> " + esc(s.visual_notes));
+    if (s.speaker_notes) bits.push("<b>ملاحظات المحاضر:</b> " + esc(s.speaker_notes));
+    $("slideNotes").innerHTML = bits.length ? bits.join("<br>") : "لا توجد ملاحظات لهذه الشريحة.";
+  }
+
+  function renderReview() {
+    $("rvFacts").innerHTML = S.project.slides.length ? factsMarkup() : "";
+    var edits = S.project.user_review.requested_edits || [];
+    $("rvHistory").innerHTML = edits.length
+      ? '<div class="card pad"><h3 style="margin:0 0 14px;font-size:17px">سجل التعديلات المطبَّقة</h3>' +
+      edits.map(function (e) {
+        return '<div style="padding:10px 0;border-top:1px solid var(--line)"><b class="en">' + esc(e.target) + "</b> · " + esc(e.category) + "<br><span style='color:var(--muted)'>" + esc(e.instruction) + "</span></div>";
+      }).join("") + "</div>"
+      : "";
+  }
+
+  function renderRevision() {
+    var chips = ["اختصر النص.", "أضف أمثلة.", "غيّر التصميم.", "عدّل الشريحة الثالثة.", "اجعل العرض مناسبًا للطلاب."];
+    $("revChips").innerHTML = chips.map(function (c) { return '<button type="button" class="chip">' + esc(c) + "</button>"; }).join("");
+    Array.prototype.forEach.call($("revChips").querySelectorAll(".chip"), function (b) {
+      b.onclick = function () {
+        var box = $("revBox");
+        box.value = (box.value ? box.value.replace(/\s*$/, " ") : "") + b.textContent;
+        box.focus();
+      };
+    });
+  }
+
+  function renderFinal() {
+    if (!S.project.slides.length) return;
+    $("fnFacts").innerHTML = factsMarkup();
+    if (S.finalIdx >= S.project.slides.length) S.finalIdx = 0;
+    renderThumbs($("fnThumbs"), S.finalIdx, function (i) { S.finalIdx = i; renderFinal(); });
+    paintStage($("fnStage"), S.finalIdx);
+    $("fnPos").innerHTML = '<span class="en">' + (S.finalIdx + 1) + " / " + S.project.slides.length + "</span>";
+    $("fnPrev").disabled = S.finalIdx === 0;
+    $("fnNext").disabled = S.finalIdx === S.project.slides.length - 1;
+    exportOptions();
+  }
+
+  /* =========================================================
+     11. WIRING
+     ========================================================= */
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-go]"), function (b) {
+    b.onclick = function () { go(b.getAttribute("data-go")); };
+  });
+  $("brandBtn").onclick = function () { go("home"); };
+
+  // upload
+  var drop = $("drop"), fi = $("fileInput");
+  drop.onclick = function () { fi.click(); };
+  drop.onkeydown = function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fi.click(); } };
+  ["dragenter", "dragover"].forEach(function (ev) {
+    drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("over"); });
+  });
+  ["dragleave", "drop"].forEach(function (ev) {
+    drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove("over"); });
+  });
+  drop.addEventListener("drop", function (e) {
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) acceptFile(e.dataTransfer.files[0]);
+  });
+  fi.onchange = function () { if (fi.files && fi.files[0]) acceptFile(fi.files[0]); };
+
+  $("usePaste").onclick = function () {
+    var txt = $("pasteBox").value.trim();
+    $("uploadErr").innerHTML = "";
+    if (txt.replace(/\s/g, "").length < 200) {
+      $("uploadErr").innerHTML = banner("err", "النص قصير جدًا. الصق محتوى أطول (200 حرف على الأقل).");
+      return;
+    }
+    S.source = { name: "نص ملصق", type: "نص", size: new Blob([txt]).size, text: txt, status: "ready" };
+    renderFileCard();
+    $("toConfig").disabled = false;
+  };
+
+  $("toConfig").onclick = function () { go("config"); };
+
+  $("startRun").onclick = function () {
+    S.config = {
+      title: $("cfgTitle").value.trim(),
+      audience: $("cfgAudience").value.trim(),
+      level: $("cfgLevel").value,
+      language: $("cfgLang").value,
+      count: parseInt($("cfgCount").value, 10) || 0,
+      style: $("cfgStyle").value
+    };
+    go("run");
+    runPipeline();
+  };
+
+  $("cancelRun").onclick = function () {
+    if (S.abort) S.abort.abort();
+    go("config");
+  };
+
+  $("prevSlide").onclick = function () { if (S.slideIdx > 0) { S.slideIdx--; renderPreview(); } };
+  $("nextSlide").onclick = function () { if (S.slideIdx < S.project.slides.length - 1) { S.slideIdx++; renderPreview(); } };
+  $("fnPrev").onclick = function () { if (S.finalIdx > 0) { S.finalIdx--; renderFinal(); } };
+  $("fnNext").onclick = function () { if (S.finalIdx < S.project.slides.length - 1) { S.finalIdx++; renderFinal(); } };
+
+  document.addEventListener("keydown", function (e) {
+    if (S.screen !== "preview" && S.screen !== "final") return;
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test((e.target && e.target.tagName) || "")) return;
+    if (e.key === "ArrowRight") { (S.screen === "preview" ? $("prevSlide") : $("fnPrev")).click(); }
+    if (e.key === "ArrowLeft") { (S.screen === "preview" ? $("nextSlide") : $("fnNext")).click(); }
+  });
+
+  $("approveBtn").onclick = function () {
+    S.project.user_review.status = "approved";
+    S.project.workflow.current_stage = STAGES.FINALIZING;
+    renderChrome();
+    S.project.export.status = "not_started";
+    S.project.workflow.current_stage = STAGES.EXPORT_READY;
+    S.finalIdx = 0;
+    saveLocal();
+    go("final");
+  };
+
+  $("applyRev").onclick = function () {
+    var txt = $("revBox").value.trim();
+    if (txt.length < 4) {
+      $("revErr").innerHTML = banner("err", "اكتب وصفًا للتعديل المطلوب أولًا.");
+      return;
+    }
+    if (!S.sample) {
+      $("revErr").innerHTML = banner("err", "خدمة التوليد غير متاحة في هذا العرض للصفحة، لذلك لا يمكن تطبيق التعديلات.");
+      return;
+    }
+    applyRevision(txt);
+  };
+
+  $("startOver").onclick = function () {
+    clearLocal();
+    S.project = blankProject();
+    S.source = { name: "", type: "", size: 0, text: "", status: "" };
+    S.analysis = null; S.slideIdx = 0; S.finalIdx = 0;
+    $("fileInput").value = ""; $("pasteBox").value = ""; $("revBox").value = "";
+    renderFileCard();
+    $("toConfig").disabled = true;
+    go("home");
+  };
+
+  var resumeData = loadLocal();
+  if (resumeData) {
+    $("resumeBtn").hidden = false;
+    $("resumeBtn").onclick = function () {
+      S.project = resumeData.project;
+      S.config = resumeData.config || {};
+      S.source = Object.assign({ name: "", type: "", size: 0, text: "", status: "ready" }, resumeData.source || {});
+      validateProject(S.project);
+      S.slideIdx = 0;
+      go(S.project.user_review.status === "approved" ? "final" : "preview");
+    };
+  }
+
+  window.addEventListener("resize", function () {
+    if (S.screen === "preview") fitStage($("stage"));
+    if (S.screen === "final") fitStage($("fnStage"));
+  });
+
+  // Honest format list: .pdf only if the PDF text extractor actually loaded.
+  (function () {
+    var check = function () {
+      var ok = typeof window.pdfjsLib !== "undefined";
+      var node = document.querySelector("#drop .formats");
+      if (node) {
+        node.innerHTML = ok
+          ? 'الصيغ المدعومة فعليًا: <code>.txt</code> <code>.md</code> <code>.pdf</code>'
+          : 'الصيغ المدعومة فعليًا في هذه الصفحة: <code>.txt</code> <code>.md</code> — قراءة ملفات PDF غير متاحة الآن، الصق النص بدلًا من ذلك.';
+      }
+      $("fileInput").accept = ok
+        ? ".txt,.md,.markdown,.pdf,text/plain,text/markdown,application/pdf"
+        : ".txt,.md,.markdown,text/plain,text/markdown";
+      window.__pdfOk = ok;
+    };
+    check();
+    window.addEventListener("load", check);
+    setTimeout(check, 2500);
+  })();
+
+  resolveCaps();
+  go("home");
+})();
+</script>

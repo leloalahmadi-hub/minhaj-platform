@@ -1,0 +1,41 @@
+# --- Secrets: never commit any of these ---
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.*
+credentials.*
+config.local.*
+
+# --- Dependencies / build output (this project needs none) ---
+node_modules/
+dist/
+build/
+.cache/
+*.tgz
+
+# --- Logs & temp ---
+*.log
+npm-debug.log*
+yarn-error.log*
+tmp/
+temp/
+*.tmp
+
+# --- OS / editor noise ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*~
+
+# --- User data & generated exports (never publish other people's material) ---
+uploads/
+exports/
+*.pptx
+*.docx
+*.xlsx
